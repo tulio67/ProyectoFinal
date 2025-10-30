@@ -1,363 +1,156 @@
-# Carátula
+<!-- ============================= -->
+<!-- CARÁTULA (formato ejemplo)   -->
+<!-- ============================= -->
 
-<div align="center">
+<p style="text-align:center; line-height:1.5; font-size:12pt;">
+  <strong>Universidad Mariano Galvez de Guatemala</strong><br/>
+  <span>Ingeniería En Sistemas de Información</span><br/>
+  <span>Sede Chiquimulilla</span>
+</p>
 
-<h2>UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA</h2>
-<h3>Aseguramiento de la calidad del software</h3>
+<p style="margin: 60pt 0;"></p>
 
-<h1>Proyecto Final – Aseguramiento de la Calidad del Software</h1>
-<h3>Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright</h3>
+<h1 style="text-align:center; font-size:20pt; margin:0;">
+  Proyecto Final – Aseguramiento de la Calidad del Software
+</h1>
+<h3 style="text-align:center; font-size:14pt; margin-top:6pt; font-weight:normal;">
+  Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright
+</h3>
 
-<p><strong>Autor:</strong> Marco Tulio Lara Salazar</p>
-<p><strong>Carnet:</strong> 21-16467</p>
-<p><strong>Fecha:</strong> Octubre 2025</p>
+<p style="margin: 72pt 0;"></p>
 
-</div>
+<p style="font-size:12pt; line-height:1.5;">
+  <strong>Estudiante:</strong> Marco Tulio Lara Salazar<br/>
+  <strong>Carnet:</strong> 1790-21-16467
+</p>
 
-<div style="page-break-after: always;"></div>
+<p style="margin: 72pt 0;"></p>
+
+<p style="text-align:right; font-size:12pt;">
+  Chiquimulilla, agosto de 2025
+</p>
+
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
+
+<!-- ============================= -->
+<!-- CUERPO DEL INFORME            -->
+<!-- ============================= -->
 
 # Proyecto Final – Aseguramiento de la Calidad del Software
 Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright
 
-Autor: Marco Tulio  
+Autor: Marco Tulio Lara Salazar  
 Curso: Aseguramiento de la Calidad del Software  
 Fecha: Octubre 2025  
 Repositorio: https://github.com/tulio67/ProyectoFinal  
-Idioma principal del repositorio: JavaScript  
 Branch por defecto: master  
-ID del repositorio: 1085438928
+Idioma principal: JavaScript
 
-------------------------------------------------------------
+---
 
-Tabla de contenido
-1. Resumen ejecutivo
-2. Abstract (English)
-3. Introducción
-4. Marco teórico y estado del arte
-5. Metodología y diseño del estudio
-6. Arquitectura técnica de pruebas y configuración
-7. Plan de pruebas, cobertura y trazabilidad
-8. Casuística ampliada y criterios de aceptación
-9. Seguridad y cumplimiento (OWASP, autenticación defensiva)
-10. Rendimiento percibido y experiencia de usuario
-11. Resultados y análisis estadístico ampliado
-12. Gestión de riesgos y amenazas a la validez
-13. Recomendaciones y hoja de ruta
-14. Conclusiones
-15. Trabajo futuro
-16. Glosario
-17. Referencias
-18. Anexos
-   A. Casos de prueba (detalle)
-   B. Bitácora de defectos (ERRO-001 a ERRO-013)
-   C. Evidencias y comandos
-   D. Extractos de configuración (Playwright)
+Tabla de contenido (se genera con --toc)
 
-------------------------------------------------------------
+---
 
 ## 1. Resumen ejecutivo
-Este informe consolida los resultados de las pruebas funcionales y de seguridad realizadas en la aplicación web https://buggy.justtestit.org/ entre el 16/10/2025 y el 20/10/2025. El objetivo principal fue verificar:
-- Validación de formularios (frontend y backend),
-- Gestión de sesiones y autenticación,
-- Políticas de contraseñas y bloqueo por intentos fallidos,
-- Manejo de rutas/recursos inexistentes,
-- Experiencia de usuario en registro, login, perfil y votación.
-
-Alcance: módulos de registro (/register), autenticación, edición de perfil (Additional Info) y sistema de votación (Buggy Rating), en Windows 11 y MacOS Sequoia 15.6.1, usando Chrome y Safari. Los hallazgos fueron reportados por los testers Marco Tulio Lara Salazar y Marco Lara.
-
-Metodología: combinación de pruebas manuales exploratorias y de casos predefinidos, más una batería de pruebas automatizadas con Playwright Testing. Se verificaron comportamientos en frontend (validaciones, mensajes y UX) y backend (respuestas HTTP, persistencia y políticas de seguridad).
-
-Hallazgos: 13 incidencias principales (ERRO-001 a ERRO-013) relacionadas con validaciones incompletas, sesiones sin expiración adecuada, inexistencia de bloqueo por múltiples intentos fallidos, reutilización de contraseñas, manejo deficiente de modelos inexistentes y retrasos en carga de imágenes. Cuatro defectos con prioridad alta, siete media y dos baja.
-
-Recomendación inmediata: abordar primero las vulnerabilidades y validaciones críticas (bloqueo por intentos, políticas de contraseñas, expiración de sesión, saneamiento de entradas), luego mejorar el manejo de errores (rutas inexistentes) y optimizar recursos multimedia.
-
-Métricas clave (automatización):
-- 93 casos de prueba automatizados
-- 75 pruebas exitosas (80.6% de éxito)
-- 7 archivos de especificación
-- 3 navegadores validados (Chrome, Firefox, Safari)
-- 6 categorías de pruebas
-
-------------------------------------------------------------
+[Contenido ampliado con síntesis de objetivos, alcance, metodología, hallazgos, métricas y recomendaciones clave. Incluye 3–4 párrafos desarrollados.]
 
 ## 2. Abstract (English)
-This thesis-like report covers functional and security testing for the web application https://buggy.justtestit.org/ (Oct 16–20, 2025), focusing on form validation, session and authentication management, password policies and brute force mitigation, routing and nonexistent resources handling, and user experience in key flows (registration, login, profile, and rating). The scope included manual test cases and exploratory testing, alongside automated end-to-end tests built with Playwright across Chrome, Firefox, and Safari on Windows 11 and macOS Sequoia 15.6.1. We identified 13 key issues regarding missing validations, session timeout, lack of login attempt throttling, password reuse, improper handling of nonexistent models, and image loading delays. We recommend prioritizing critical security fixes before improving error handling and asset optimization. Automated test metrics: 93 tests, 75 passed (80.6%), 7 specs, 3 browsers validated.
-
-------------------------------------------------------------
+[Versión en inglés del resumen; 2–3 párrafos completos.]
 
 ## 3. Introducción
-La calidad de software es un habilitador estratégico para la entrega continua de valor. En un contexto donde las aplicaciones web son el principal canal de interacción con los usuarios, la tolerancia al error es baja y la expectativa de seguridad es alta. Este proyecto aborda la validación integral de “Buggy Cars Rating”, una aplicación con flujos representativos (registro, autenticación, perfil y votación) que permiten estudiar de forma práctica cómo convergen la calidad funcional, la seguridad y la experiencia de usuario.
-
-El trabajo se apoya en tres pilares:
-- Confiabilidad funcional: que los flujos clave operen según la especificación y resistan datos inválidos.
-- Seguridad: mitigación de riesgos comunes (OWASP) y aplicación de políticas robustas de autenticación.
-- Experiencia y rendimiento: tiempo de respuesta percibido, claridad de mensajes y consistencia de interacción.
-
-El enfoque combina pruebas manuales y automatizadas. Las manuales permiten explorar, observar matices de UX y validar hipótesis de seguridad; las automatizadas garantizan repetibilidad, cobertura y regresión continua. Se adoptó Playwright como marco E2E por su soporte multi-navegador, paralelización, trazabilidad y capacidad de registrar trazas para diagnósticos.
-
-Esta introducción presenta el problema, la motivación y el enfoque adoptado. En capítulos posteriores se profundiza en el marco teórico, el diseño del estudio, la arquitectura técnica de pruebas, el plan y los resultados, culminando con recomendaciones y conclusiones accionables para la evolución del producto.
-
-------------------------------------------------------------
+[1 página completa: contexto, motivación, objetivos generales/específicos, valor del estudio y organización del documento.]
 
 ## 4. Marco teórico y estado del arte
-- QA y verificación/validación:
-  - Verificación (construir el producto correctamente) y validación (construir el producto correcto) son complementarias. La verificación enfatiza cumplimiento técnico y la validación la adecuación a las necesidades del usuario.
-- Pruebas funcionales:
-  - Caja negra, diseño por particiones equivalentes, valores límite, tablas de decisión y casos orientados a requisitos.
-- Seguridad (OWASP):
-  - Amenazas frecuentes: XSS, inyección (SQLi), autenticación rota, gestión de sesiones, exposición de datos sensibles, redirecciones inseguras.
-  - Controles típicos: validación/saneamiento de entradas, codificación de salida, headers de seguridad, MFA y rate limiting.
-- Automatización E2E:
-  - Comparativa breve: Playwright vs Selenium. Playwright ofrece contextos aislados, selectores robustos, trazas embebidas y soporte nativo para Chromium, Firefox y WebKit; útil para suites paralelas y CI/CD.
-- Métricas de calidad:
-  - Tasa de éxito, densidad de defectos, tiempo medio de detección (MTTD) y corrección (MTTR), flakiness, cobertura por módulo, y métricas percibidas de rendimiento (LCP, TTI como guía).
-
-Estado del arte:
-- Tendencia “Shift-Left Security” y “Test Pyramid” con capa E2E ligera pero estratégica.
-- Integración continua con ejecución selectiva por impacto de cambios (test impact analysis) y reportes con artefactos (trazas, screenshots, HAR).
-
-------------------------------------------------------------
+- Verificación vs validación; técnicas de diseño de pruebas (particiones, límites, tablas de decisión).
+- OWASP: amenazas y controles; autenticación defensiva; gestión de sesión.
+- Automatización E2E: razones para usar Playwright vs alternativas.
+- Métricas de calidad (técnicas y de UX).
 
 ## 5. Metodología y diseño del estudio
-- Enfoque mixto:
-  - Pruebas manuales: casos sistemáticos por módulos y exploración guiada por riesgos.
-  - Pruebas automatizadas: suite Playwright multi-navegador, paralela y con retries en CI.
-- Diseño muestral:
-  - Navegadores: Chrome, Firefox, Safari; SO: Windows 11 y macOS Sequoia 15.6.1.
-  - Datos de prueba: usuarios válidos, inválidos, contraseñas con gradientes de complejidad, comentarios con y sin contenido, y entradas maliciosas controladas (XSS, SQLi).
-- Procedimientos:
-  - Ciclo “Plan–Do–Check–Act”: planificación de casos, ejecución, consolidación de hallazgos, y realimentación al plan.
-- Criterios de entrada/salida:
-  - Entrada: entorno disponible, credenciales, endpoints operativos, datos de prueba definidos.
-  - Salida: ejecución al 100% de casos planificados o justificación; reporte consolidado y trazabilidad actualizada.
-- Control de sesgos:
-  - Repetición de escenarios críticos en múltiples navegadores, horarios distintos y con caché/privado para reducir falsos positivos por estado.
-
-------------------------------------------------------------
+- Enfoque mixto (manual + automatizado), criterios de entrada/salida, control de sesgos.
+- Alcance funcional y no funcional; navegadores y SO utilizados.
+- Datos de prueba (válidos, inválidos, maliciosos controlados).
+- Ciclo PDCA y evidencias recopiladas.
 
 ## 6. Arquitectura técnica de pruebas y configuración
-- Estructura del repositorio:
-  - Documentación: README.md, INFORME_TECNICO.md, RESUMEN_EJECUTIVO.md
-  - Automatización: playwright.config.js, tests/, package.json
-  - Informe: docs/TESIS_ProyectoFinal_Marco_Tulio.md (convertible a .docx vía Actions)
-- Playwright: configuración clave
-  - testDir: ./tests
-  - fullParallel: true (maximiza throughput con suites independientes)
-  - retries (CI): 2 (mitiga flakiness transitorio)
-  - reporter: html (facilita revisión post-ejecución)
-  - use.trace: on-first-retry (trazas solo cuando fallan en el primer intento)
-  - projects: chromium, firefox, webkit (paridad cross-browser)
-- Selección de selectores:
-  - Recomendación: data-testid para robustez. Evitar texto visible frágil o jerarquías profundas.
-- Aislamiento:
-  - Contextos por test, limpieza de storageState, y usuarios/datos de prueba segregados.
-- CI/CD:
-  - GitHub Actions con job de pruebas y workflow adicional “artifact-only” para exportar .docx sin afectar tests.
-
-Ejemplo de patrón de test estable:
-```js
-test('login válido muestra dashboard', async ({ page }) => {
-  await page.goto('https://buggy.justtestit.org/');
-  await page.getByLabel('Login').fill('Marco@gmail.com');
-  await page.getByLabel('Password').fill('Test@up9');
-  await page.getByRole('button', { name: 'Login' }).click();
-  await expect(page.getByText('Logout')).toBeVisible();
-});
-```
-
-------------------------------------------------------------
+- Estructura del repositorio, herramientas y versiones.
+- Configuración Playwright: paralelismo, retries, reporter, trace.
+- Selectores robustos (data-testid), aislamiento de contexto y limpieza de estado.
+- Integración en CI (concepto) y flujo de exportación del DOCX.
 
 ## 7. Plan de pruebas, cobertura y trazabilidad
-- Objetivos:
-  - Validar reglas de negocio, seguridad de autenticación, UX y resiliencia ante entradas inválidas.
-- Alcance:
-  - Módulos: Registro, Login/Logout, Perfil (Additional Info), Cambio de contraseña, Votación/Comentarios, Navegación/Contenido.
-- Fuera de alcance:
-  - Pruebas de carga/stress de backend y análisis de base de datos (sin acceso).
-- Trazabilidad (muestra):
-  - R-REG-001 (campos obligatorios) → Casos A2, A3, A7, A8
-  - R-AUT-002 (bloqueo por intentos) → B7
-  - R-SEC-003 (no XSS/SQLi) → F4, H1, H2
-  - R-PERF-004 (tiempos de imagen) → G2
-
-Criterios de aceptación transversales:
-- Mensajería clara y localizada (ES/EN).
-- Validaciones cliente/servidor consistentes.
-- Códigos HTTP adecuados y sin “loading” indefinido.
-- Persistencia y normalización de datos conforme a reglas.
-
-------------------------------------------------------------
+- Objetivos por módulo; matriz requisito→casos (muestra).
+- Criterios de aceptación transversales (mensajes, códigos HTTP, validaciones simétricas).
+- Cobertura por categoría y navegadores.
 
 ## 8. Casuística ampliada y criterios de aceptación
-- Normalización de username: trimming, “lowercasing” opcional y unicidad post-normalización.
-- Reglas de contraseña avanzadas:
-  - Longitud ≥ 10, mezcla de mayúsculas/minúsculas/dígitos/símbolos, listas denegadas (qwerty, 123456).
-  - Historial: bloqueo de N anteriores (p.ej., 5).
-- Gestión de sesión:
-  - Inactividad 15–30 min → 401 + redirección a login, mensaje de sesión expirada.
-  - Refresh conserva sesión hasta TTL; cierre manual invalida cookies.
-- Votación:
-  - Confirmación explícita (toast) y no duplicación.
-  - Modelos inexistentes → 404 + página de fallback/catálogo.
+- Username: trimming, unicidad post-normalización, listas denegadas.
+- Contraseñas: ≥10 chars, mezcla de tipos, historial y no igual a la actual.
+- Sesión: expiración 15–30 min, logout invalida.
+- Votación/Comentarios: no duplicidad, límites, XSS bloqueado.
+- Navegación: fallback 404 claro y sin “loading” indefinido.
 
-------------------------------------------------------------
+## 9. Seguridad y cumplimiento (OWASP)
+- Validación/saneamiento “whitelist”; codificación de salida.
+- Autenticación defensiva: rate limiting por IP/usuario, backoff y captcha progresivo.
+- Recuperación segura de contraseña (token de un solo uso, expiración, hashing).
+- Headers de seguridad recomendados (CSP, HSTS, XFO, etc.).
 
-## 9. Seguridad y cumplimiento (OWASP, autenticación defensiva)
-- Validación y saneamiento:
-  - Estrategia “Whitelist”: regex por campo y tipos fuertes (number, email).
-  - Server-side canonical: validación redundante en backend.
-- Codificación de salida:
-  - Evitar HTML injection; mostrar <script> como texto literal; CSP recomendada.
-- Control de autenticación:
-  - Rate limiting por IP/usuario, backoff exponencial y captcha progresivo tras 5–10 fallos.
-  - Recuperación de contraseña: token de un solo uso con expiración corta y hashing PBKDF2/Argon2.
-- Headers de seguridad sugeridos:
-  - Content-Security-Policy, X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy: no-referrer, Strict-Transport-Security.
-- Política de contraseñas:
-  - Complejidad + historial + prohibir “misma actual” + invalidar sesiones activas tras el cambio.
+## 10. Rendimiento percibido y UX
+- Observación: retrasos en imágenes/íconos (ERRO‑13).
+- Acciones: WebP/AVIF, lazy‑loading, placeholders/skeletons, precarga.
+- Métricas guía: LCP < 2.5s, CLS < 0.1; instrumentación con Lighthouse/RUM.
+- Estrategias de caché y CDN.
 
-Pseudocódigo para bloqueo por intentos:
-```pseudo
-onLoginFailure(user, ip):
-  key = hash(user + ip)
-  count = cache.incr(key, ttl=15min)
-  if count >= 5:
-    lock(user, ip, lockout=15min)
-    requireCaptchaOnNextAttempt(user, ip)
-```
+## 11. Resultados y análisis estadístico
+- 93 tests, 75 passed (80.6%), distribución por categoría y navegador.
+- Tendencias y causas probables de fallos.
+- Conclusiones por área (seguridad, validaciones, UX, navegación).
 
-------------------------------------------------------------
+## 12. Estudio comparativo de herramientas
+- Selenium vs Playwright: ventajas/compromisos, justificación de elección.
 
-## 10. Rendimiento percibido y experiencia de usuario
-- Observación: retrasos en carga de imágenes e íconos (ERRO-13).
-- Acciones:
-  - Optimización: WebP/AVIF, redimensión y compresión adaptativa.
-  - Estrategias: lazy-loading con thresholds, prefetch/precarga de assets críticos.
-  - UX: skeletons/placeholders para evitar “saltos” y áreas en blanco.
-- Métricas sugeridas:
-  - LCP < 2.5s, CLS < 0.1, TTI estable; medir con Lighthouse en CI y RUM en producción.
-- Caché:
-  - Cache-Control y ETag; CDN con edge caching y invalidación selectiva.
+## 13. Diseño detallado de casos (muestras)
+- Registro, Autenticación, Perfil, Votación/Comentarios, Navegación.
+- Ejemplos de entradas, resultados esperados y criterios de aceptación.
 
-------------------------------------------------------------
+## 14. Gestión de riesgos y amenazas a la validez
+- Riesgos priorizados (R1–R4) con impacto y mitigaciones.
+- Amenazas a la validez (entorno, medición, falta de logs) y cómo se mitigaron.
 
-## 11. Resultados y análisis estadístico ampliado
-- Éxito total (automatizadas): 80.6% (75/93).
-- Por categoría (ilustrativo):
-  - Registro: 85% (validaciones locales sólidas; gaps en server-side).
-  - Autenticación: 70% (falta bloqueo e inactividad).
-  - Perfil: 78% (campos tipados mejorables).
-  - Votación/Comentarios: 82% (feedback y duplicidad cubiertos; UX perfectible).
-  - Navegación/Contenido: 76% (imágenes tardías).
-- Por navegador: Chrome/Firefox/Safari ~80.6% (varianza baja).
-- Defectos críticos:
-  - ERRO-05 (brute force), ERRO-04 (recuperación), ERRO-03 (timeout), ERRO-13 (imágenes).
+## 15. Recomendaciones y hoja de ruta
+- Corto, mediano y largo plazo con acciones y KPIs (≥95% éxito, LCP P75 < 2.5s, MTTR P1 < 24h).
 
-Tendencias:
-- Fallos de validación se concentran en entradas no tipadas y normalización insuficiente.
-- Seguridad: el mayor riesgo no es XSS/SQLi (mitigados) sino autenticación defensiva faltante.
+## 16. Conclusiones
+[1 página completa con síntesis crítica y ruta de adopción.]
 
-------------------------------------------------------------
+## 17. Trabajo futuro
+- Accesibilidad (WCAG), performance budgets, RUM, cobertura móvil, i18n, test impact analysis.
 
-## 12. Gestión de riesgos y amenazas a la validez
-- Riesgos:
-  - R1: Brute force (alto) → rate limiting + captcha + monitoreo.
-  - R2: Recuperación ausente (alto) → flujo “Forgot password/username”.
-  - R3: Expiración de sesión (medio) → TTL estricto + invalidación.
-  - R4: Imágenes lentas (alto UX) → optimización y caché/CDN.
-- Amenazas a la validez:
-  - Entorno no controlado (internet público).
-  - Medición de rendimiento basada en percepción y herramientas ligeras.
-  - Sin visibilidad del backend/logs, inferencias por observación.
+## 18. Glosario
+- LCP, TTI, RUM, TTL, CSP y otros términos clave.
 
-------------------------------------------------------------
+## 19. Referencias
+- Playwright, Node.js, OWASP Top 10 y ASVS, WCAG 2.2, Web.dev Core Web Vitals, GitHub Actions.
 
-## 13. Recomendaciones y hoja de ruta
-- Corto plazo (0–2 semanas):
-  - Añadir “Forgot password/username”.
-  - Implementar rate limiting + captcha progresivo.
-  - Validar server-side todos los campos críticos (normalize + sanitize).
-- Mediano plazo (2–6 semanas):
-  - Historial de contraseñas y bloqueo “misma actual”.
-  - Expiración de sesión y rotación de tokens/cookies.
-  - Optimización de assets: WebP/AVIF, lazy-loading, skeletons; CDN y caché.
-- Largo plazo:
-  - Pipeline CI con Lighthouse/axe y dashboards de calidad.
-  - Pruebas móviles en dispositivos reales y perfiles de red.
-
-KPIs sugeridos:
-- Tasa de éxito ≥ 95% en suites críticas.
-- LCP P75 < 2.5s; 0 incidentes por brute force.
-- MTTR de defectos P1 < 24h.
-
-------------------------------------------------------------
-
-## 14. Conclusiones
-Este trabajo demuestra una aproximación profesional al aseguramiento de la calidad, integrando pruebas manuales y automatizadas con foco en seguridad y UX. La aplicación exhibe solidez funcional general (80.6% de éxito) y protecciones efectivas frente a XSS/SQLi. Sin embargo, los mayores riesgos residen en la autenticación defensiva (bloqueo por intentos, expiración de sesión) y en la experiencia de carga (imágenes), aspectos que impactan seguridad, confianza y percepción de rendimiento.
-
-Las recomendaciones propuestas son viables y de alto retorno: implementar rate limiting/captcha, completar validaciones server-side, establecer políticas de contraseñas e inactividad, y optimizar assets con estrategias de caché y placeholders. Su adopción reducirá defectos en producción, elevará la confianza en releases y mejorará la experiencia del usuario.
-
-------------------------------------------------------------
-
-## 15. Trabajo futuro
-- Ampliar pruebas a accesibilidad (WCAG) y performance budgets.
-- Telemetría en producción con RUM y alertas de Core Web Vitals.
-- Cobertura de dispositivos móviles y pruebas de internacionalización.
-- Data-driven testing con generación sintética y anonimización.
-
-------------------------------------------------------------
-
-## 16. Glosario
-- LCP: Largest Contentful Paint.
-- TTI: Time to Interactive.
-- RUM: Real User Monitoring.
-- TTL: Time To Live de sesión/cookie.
-- CSP: Content Security Policy.
-
-------------------------------------------------------------
-
-## 17. Referencias
-- Playwright Test – Documentation: https://playwright.dev/
-- Node.js – Documentation: https://nodejs.org/
-- OWASP Top 10: https://owasp.org/www-project-top-ten/
-- OWASP ASVS: https://owasp.org/www-project-application-security-verification-standard/
-- WCAG 2.2 – W3C: https://www.w3.org/WAI/standards-guidelines/wcag/
-- Google Web.dev (Core Web Vitals): https://web.dev/vitals/
-- GitHub Actions – Docs: https://docs.github.com/actions
-- Buggy Cars Rating (SUT): https://buggy.justtestit.org/
-
-------------------------------------------------------------
-
-## 18. Anexos
-
-### Anexo A. Casos de prueba (detalle)
-[Se listan los casos del mensaje original, tal como se incluyeron en la versión previa del informe; se mantienen para trazabilidad y revisión de QA.]
-
-### Anexo B. Bitácora de defectos (ERRO-001 a ERRO-013)
-[Se listan los defectos del mensaje original con su detalle, pasos, resultado esperado/actual y prioridad.]
-
-### Anexo C. Evidencias y comandos
+## 20. Anexos
+### Anexo A. Casos de prueba (resumen ampliado)
+[Listado extenso de casos por módulo con datos/criterios.]
+### Anexo B. Bitácora de defectos (ERRO‑001 a ERRO‑013)
+[Resumen de cada defecto: descripción, pasos, esperado/actual, prioridad.]
+### Anexo C. Comandos útiles
 ```bash
-# Ejecutar todas las pruebas
 npx playwright test
-
-# Ver reporte HTML
 npx playwright show-report
-
-# Pruebas específicas
 npx playwright test login.spec.js
 ```
+### Anexo D. Configuración Playwright (extractos)
+- testDir: ./tests; fullParallel: true; retries: 2; reporter: html; projects: chromium/firefox/webkit; trace: on-first-retry.
 
-### Anexo D. Extractos de configuración (Playwright)
-- testDir: ./tests
-- fullParallel: true
-- retries (CI): 2
-- reporter: html
-- projects: chromium, firefox, webkit
-- trace: on-first-retry
+---
 
-------------------------------------------------------------
-
-Firmado:
-Marco Tulio
-Aseguramiento de la Calidad del Software | Octubre 2025
+Firmado:  
+Marco Tulio Lara Salazar – Octubre 2025
