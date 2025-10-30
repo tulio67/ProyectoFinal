@@ -1,32 +1,347 @@
-name: Export thesis to DOCX (artifact only)
+<!-- ============================= -->
+<!-- CARÁTULA -->
+<!-- ============================= -->
 
-on:
-  workflow_dispatch:
+# UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA
+### Aseguramiento de la calidad del software
 
-permissions:
-  contents: read
+## Proyecto Final – Aseguramiento de la Calidad del Software
+Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+Autor: Marco Tulio Lara Salazar  
+Carnet: 21-16467  
+Fecha: Octubre 2025
 
-      - name: Setup Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
 
-      - name: Convert Markdown to DOCX
-        run: |
-          pandoc docs/TESIS_ProyectoFinal_Marco_Tulio.md \
-            -o TESIS_ProyectoFinal_Marco_Tulio.docx \
-            --from gfm \
-            --toc --toc-depth=3 \
-            --metadata=title:"Proyecto Final – Aseguramiento de la Calidad"
+<!-- ============================= -->
+<!-- PORTADA / METADATOS INICIALES -->
+<!-- ============================= -->
 
-      - name: Upload DOCX artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TESIS_ProyectoFinal_Marco_Tulio.docx
-          path: TESIS_ProyectoFinal_Marco_Tulio.docx
-          if-no-files-found: error
+# Proyecto Final – Aseguramiento de la Calidad del Software
+Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright
+
+Autor: Marco Tulio Lara Salazar  
+Curso: Aseguramiento de la Calidad del Software  
+Fecha: Octubre 2025  
+Repositorio: https://github.com/tulio67/ProyectoFinal  
+Idioma principal del repositorio: JavaScript  
+Branch por defecto: master
+
+---
+
+Tabla de contenido (se generará automáticamente)
+
+---
+
+## 1. Resumen ejecutivo
+
+Este informe presenta la evaluación integral de calidad realizada sobre la aplicación web “Buggy Cars Rating”, abarcando los flujos críticos de Registro, Autenticación (Login/Logout), Perfil, Votación y Comentarios, así como la navegación general. Se combinaron pruebas manuales (casos sistemáticos y exploración guiada por riesgos) con pruebas automatizadas end-to-end en tres navegadores mediante Playwright. Los objetivos principales fueron verificar la corrección funcional, la robustez de validaciones, la seguridad de autenticación y la experiencia de usuario con foco en rendimiento percibido.
+
+Principales hallazgos:
+- Validaciones incompletas en algunos campos (riesgo de integridad de datos).
+- Ausencia de bloqueo ante múltiples intentos de login fallidos (riesgo de fuerza bruta).
+- Expiración de sesión no consistente (riesgo en equipos compartidos).
+- Manejo mejorable de recursos inexistentes/rutas (UX y claridad de errores).
+- Retrasos notables en carga de imágenes e íconos (percepción de rendimiento).
+
+Métricas (automatización):
+- 93 casos automatizados, 75 aprobados (80.6% de éxito).
+- 7 especificaciones, 3 navegadores (Chrome, Firefox, Safari).
+- Evidencias en reportes HTML y trazas de Playwright.
+
+Recomendación prioritaria: implementar autenticación defensiva (rate limiting, captcha progresivo, expiración estricta de sesión), completar validaciones en servidor y optimizar recursos gráficos (formatos modernos, lazy-loading y placeholders). Estas acciones reducen riesgos de seguridad y elevan la percepción de calidad.
+
+---
+
+## 2. Abstract (English)
+
+This report describes a comprehensive quality assessment of “Buggy Cars Rating,” covering the key flows of registration, authentication, profile, rating, and comments, along with general navigation. We combined manual test cases (including risk-driven exploration) with automated end-to-end testing using Playwright across Chrome, Firefox, and Safari. The primary goals were to validate functional correctness, input robustness, secure authentication practices, and user experience focusing on perceived performance.
+
+Key findings include incomplete field validations, missing brute-force mitigations (login attempt throttling), inconsistent session expiration, suboptimal handling of nonexistent resources, and noticeable delays in loading images/icons. Automated metrics: 93 tests, 75 passed (80.6%), with evidence from HTML reports and Playwright traces. We recommend prioritizing defensive authentication measures, completing server-side validations, and optimizing graphical assets to reduce risk and enhance perceived quality.
+
+---
+
+## 3. Introducción
+
+La calidad del software integra tres dimensiones fundamentales: funcionalidad (que el sistema haga lo que debe), seguridad (que lo haga de forma confiable y resistente a amenazas) y experiencia de usuario (que resulte entendible, consistente y veloz). Este proyecto adopta un enfoque práctico para evaluar dichas dimensiones en “Buggy Cars Rating”, un sistema con casos de uso sencillos pero representativos que permiten medir con claridad los aspectos críticos de validación, autenticación, navegación y rendimiento percibido.
+
+Motivación:
+- Entregar evidencia objetiva de la situación actual de calidad.
+- Proponer mejoras accionables alineadas a buenas prácticas (OWASP, UX, CI/CD).
+- Asegurar una base confiable para futuras extensiones funcionales.
+
+Aporte de este trabajo:
+- Suite de pruebas automatizadas con Playwright, paralela y multiplataforma.
+- Diseño metodológico que equilibra pruebas manuales y automatización.
+- Reporte técnico con recomendaciones priorizadas por impacto y esfuerzo.
+
+Esta introducción establece el contexto y la visión. A lo largo del documento se profundiza en el marco teórico, el diseño del estudio, la arquitectura técnica de pruebas, los resultados y el análisis, para culminar con una hoja de ruta concreta de mejoras.
+
+---
+
+## 4. Marco teórico y estado del arte
+
+### 4.1. Verificación y validación
+- Verificación: “¿Construimos bien el producto?” Cumplimiento técnico de requisitos.
+- Validación: “¿Construimos el producto correcto?” Ajuste a necesidades del usuario.
+
+### 4.2. Diseño de pruebas funcionales
+- Particiones equivalentes y valores límite.
+- Tablas de decisión y casos orientados a reglas de negocio.
+- Pruebas negativas (datos inválidos, entradas maliciosas, rutas inexistentes).
+
+### 4.3. Seguridad web (OWASP)
+- Riesgos frecuentes: XSS, inyección, autenticación rota, gestión de sesión débil.
+- Controles: saneamiento/normalización, codificación de salida, políticas de contraseñas, bloqueo por intentos, MFA, headers de seguridad, auditoría.
+
+### 4.4. Automatización E2E con Playwright
+- Soporte nativo para Chromium/Firefox/WebKit.
+- Paralelización, trazas, selectores robustos, aislamiento por contexto.
+- Idóneo para regresiones frecuentes y validación cross-browser.
+
+### 4.5. Métricas de calidad
+- Tasa de éxito, densidad de defectos, flakiness, cobertura por módulo.
+- Métricas de UX/Rendimiento: LCP, CLS, TTI (como guía práctica).
+
+---
+
+## 5. Metodología y diseño del estudio
+
+### 5.1. Enfoque
+- Manual: casos por módulo + exploración guiada por riesgos (seguridad/UX).
+- Automatizado: Playwright con reporter HTML y trazas en fallos.
+
+### 5.2. Alcance
+- Módulos: Registro, Autenticación, Perfil (Additional Info), Votación/Comentarios, Navegación general.
+- Entornos: Windows 11 y macOS Sequoia 15.6.1; navegadores: Chrome, Firefox, Safari.
+
+### 5.3. Datos de prueba
+- Usuarios válidos/ inválidos, contraseñas con distintos niveles de complejidad.
+- Entradas maliciosas controladas (XSS, SQLi) solo para verificación de bloqueo.
+- Escenarios con sesión activa/inactiva para validar expiración.
+
+### 5.4. Procedimiento
+- Ciclo PDCA: planificar → ejecutar → verificar → ajustar.
+- Evidencias: reportes HTML, capturas y trazas en fallos.
+
+---
+
+## 6. Arquitectura técnica de pruebas y configuración
+
+### 6.1. Repositorio
+- Documentación: README.md, INFORME_TECNICO.md, RESUMEN_EJECUTIVO.md.
+- Automatización: playwright.config.js, tests/, package.json.
+- Informe: docs/TESIS_ProyectoFinal_Marco_Tulio.md (exportable a DOCX vía Actions).
+
+### 6.2. Playwright (síntesis)
+- testDir: ./tests
+- fullParallel: true
+- retries (CI): 2
+- reporter: html
+- use.trace: on-first-retry
+- projects: chromium, firefox, webkit
+
+### 6.3. Selección de selectores
+- Preferir data-testid. Evitar texto visible susceptible a cambios.
+
+### 6.4. Aislamiento
+- Contextos por test, limpieza de storage/cookies entre casos críticos.
+
+---
+
+## 7. Plan de pruebas, cobertura y trazabilidad
+
+Objetivos:
+- Verificar reglas de negocio y validaciones estrictas.
+- Evaluar autenticación defensiva (rate limiting, expiración de sesión).
+- Comprobar mensajes claros y estados de UI coherentes.
+
+Trazabilidad (muestra):
+- R-REG-001 Campos obligatorios → Casos A2, A3, A7, A8.
+- R-AUT-002 Bloqueo por intentos → Caso B7.
+- R-SEC-003 XSS/SQLi bloqueados → Casos F4, H1/H2.
+- R-PERF-004 Tiempos de imagen aceptables → Caso G2.
+
+Criterios de aceptación transversales:
+- Mensajes claros (éxito/error), localización consistente.
+- Validaciones cliente/servidor simétricas.
+- Respuestas HTTP coherentes (sin “loading” indefinido).
+- Persistencia/normalización correctas en campos clave.
+
+---
+
+## 8. Casuística ampliada y criterios de aceptación
+
+- Username: trimming, unicidad post-normalización, listas denegadas.
+- Contraseñas: longitud ≥ 10, mezcla de tipos, historial (N anteriores), prohibir “misma actual”.
+- Sesión: expiración 15–30 min de inactividad; logout invalida sesión.
+- Votación/Comentarios: confirmaciones explícitas; no duplicidad; límites de longitud; XSS bloqueado.
+- Navegación: modelos inexistentes → 404 con fallback comprensible.
+
+---
+
+## 9. Seguridad y cumplimiento (OWASP, autenticación defensiva)
+
+Validación/saneamiento:
+- Estrategia “whitelist” por campo, tipos fuertes (number/email), normalización de espacios/casos.
+
+Autenticación:
+- Rate limiting por IP/usuario, backoff exponencial y captcha progresivo tras 5–10 fallos.
+- Recuperación segura de contraseña: token de un solo uso, expiración corta, hashing robusto.
+
+Headers de seguridad recomendados:
+- Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, HSTS.
+
+Política de contraseñas:
+- Complejidad + historial + bloqueo “igual a la actual” + invalidación de sesiones activas tras cambio.
+
+---
+
+## 10. Rendimiento percibido y experiencia de usuario
+
+Observación clave (ERRO-13): retrasos en imágenes/íconos.
+- Acciones: WebP/AVIF, redimensión/compresión, lazy-loading, placeholders/skeletons, precarga de recursos críticos.
+- Métrica guía: LCP < 2.5s, CLS < 0.1; instrumentación con Lighthouse/RUM.
+
+Caché/CDN:
+- Cache-Control/ETag, CDN con edge caching, invalidación selectiva.
+
+---
+
+## 11. Resultados y análisis estadístico ampliado
+
+Síntesis:
+- 93 casos automatizados, 75 aprobados (80.6%).
+- Por categoría (ilustrativo): Registro 85%, Autenticación 70%, Perfil 78%, Votación/Comentarios 82%, Navegación 76%.
+- Cross-browser: varianza baja; fallos asociados a selectores/UX y políticas de sesión.
+
+Tendencias:
+- Fallos de validación concentran riesgos de integridad y UX.
+- El mayor riesgo de seguridad está en autenticación defensiva incompleta.
+
+---
+
+## 12. Gestión de riesgos y amenazas a la validez
+
+Riesgos priorizados:
+- R1: Fuerza bruta sin bloqueo (alto).
+- R2: Recuperación de credenciales ausente/limitada (alto).
+- R3: Expiración de sesión no estricta (medio).
+- R4: Imágenes lentas (alto UX).
+
+Amenazas a la validez:
+- Entorno no controlado (internet público).
+- Métricas de rendimiento basadas en percepción/herramientas ligeras.
+- Sin acceso a backend/logs: inferencias por observación.
+
+---
+
+## 13. Recomendaciones y hoja de ruta
+
+Corto plazo (0–2 semanas):
+- Rate limiting + captcha progresivo.
+- “Forgot password/username”.
+- Validación server-side completa.
+
+Mediano plazo (2–6 semanas):
+- Historial de contraseñas, bloqueo “misma actual”.
+- Expiración de sesión y rotación de tokens/cookies.
+- Optimización de imágenes (WebP/AVIF), lazy-loading, skeletons, CDN.
+
+Largo plazo:
+- CI con Lighthouse/axe y dashboards de calidad.
+- Pruebas móviles en dispositivos reales y perfiles de red.
+
+KPIs:
+- ≥ 95% de éxito en suites críticas.
+- LCP P75 < 2.5s; 0 incidentes por brute force.
+- MTTR P1 < 24h.
+
+---
+
+## 14. Conclusiones
+
+El sistema muestra una base funcional sólida, con protecciones efectivas frente a XSS/SQLi y cobertura de casos clave; no obstante, la autenticación defensiva (bloqueo por intentos, expiración estricta de sesión) y la optimización de recursos visuales representan áreas críticas de mejora. Las recomendaciones propuestas son de alto impacto/retorno y mejoran simultáneamente seguridad, confiabilidad y UX, habilitando un ciclo de entrega más predecible y con menor riesgo.
+
+---
+
+## 15. Trabajo futuro
+
+- Accesibilidad (WCAG) y performance budgets.
+- Telemetría con RUM y alertas de Core Web Vitals.
+- Pruebas en dispositivos móviles y perfiles de red degradados.
+- Internacionalización/localización y pruebas de contenido.
+
+---
+
+## 16. Glosario
+
+- LCP: Largest Contentful Paint.  
+- TTI: Time to Interactive.  
+- RUM: Real User Monitoring.  
+- TTL: Time To Live (sesión/cookie).  
+- CSP: Content Security Policy.
+
+---
+
+## 17. Referencias
+
+- Playwright Test – Documentation: https://playwright.dev/  
+- Node.js – Documentation: https://nodejs.org/  
+- OWASP Top 10: https://owasp.org/www-project-top-ten/  
+- OWASP ASVS: https://owasp.org/www-project-application-security-verification-standard/  
+- WCAG 2.2 – W3C: https://www.w3.org/WAI/standards-guidelines/wcag/  
+- Web.dev (Core Web Vitals): https://web.dev/vitals/  
+- GitHub Actions – Docs: https://docs.github.com/actions  
+- Buggy Cars Rating (SUT): https://buggy.justtestit.org/
+
+---
+
+## 18. Anexos
+
+### Anexo A. Casos de prueba (muestra)
+- Registro: campos obligatorios, formato, longitudes, trimming, duplicados, contraseñas débiles, contraseñas no coincidentes.  
+- Autenticación: credenciales válidas/ inválidas, múltiples intentos, expiración por inactividad.  
+- Perfil: tipado de campos (numérico, select), límites de longitud, caracteres especiales.  
+- Votación/Comentarios: duplicidad, límites, XSS.  
+- Navegación: rutas inexistentes, manejo de errores, 404.
+
+### Anexo B. Bitácora de defectos (resumen)
+- ERRO-01: Envío con campos vacíos (Alta)  
+- ERRO-02: Username con caracteres especiales (Media)  
+- ERRO-03: Sesión no expira tras 30 min (Media)  
+- ERRO-04: Ausencia de “Forgot password/username” (Alta)  
+- ERRO-05: Sin bloqueo tras múltiples intentos (Alta)  
+- ERRO-06/07/08: Tipado/validaciones inconsistente (Baja/Media)  
+- ERRO-09/10: Reutilización/igual a actual (Media)  
+- ERRO-11: Modelo inexistente sin manejo claro (Media)  
+- ERRO-12: Voto sin comentario sin mensaje adecuado (Baja)  
+- ERRO-13: Imágenes/íconos con carga lenta (Alta)
+
+### Anexo C. Comandos útiles
+```bash
+# Ejecutar todas las pruebas
+npx playwright test
+
+# Ver reporte HTML
+npx playwright show-report
+
+# Ejecutar un archivo específico
+npx playwright test login.spec.js
+```
+
+### Anexo D. Configuración Playwright (extractos)
+- testDir: ./tests  
+- fullParallel: true  
+- retries (CI): 2  
+- reporter: html  
+- projects: chromium, firefox, webkit  
+- trace: on-first-retry
+
+---
+
+Firmado:  
+Marco Tulio Lara Salazar – Octubre 2025
