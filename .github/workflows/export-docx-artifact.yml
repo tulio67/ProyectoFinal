@@ -17,9 +17,11 @@ jobs:
         uses: r-lib/actions/setup-pandoc@v2
 
       - name: Convert Markdown to DOCX (Anthony)
+        shell: bash
         run: |
-          pandoc docs/TESIS_ProyectoFinal_Anthony_Grijalva.md \
-            -o TESIS_ProyectoFinal_Anthony_Grijalva.docx \
+          set -euo pipefail
+          pandoc "docs/TESIS_ProyectoFinal_Anthony_Grijalva.md" \
+            -o "TESIS_ProyectoFinal_Anthony_Grijalva.docx" \
             --from gfm+raw_html+raw_attribute \
             --toc --toc-depth=3 \
             --metadata=title:"Evaluación Integral de Calidad de Software" \
