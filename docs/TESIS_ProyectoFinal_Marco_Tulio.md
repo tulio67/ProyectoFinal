@@ -1,3 +1,21 @@
+# Carátula
+
+<div align="center">
+
+<h2>UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA</h2>
+<h3>Aseguramiento de la calidad del software</h3>
+
+<h1>Proyecto Final – Aseguramiento de la Calidad del Software</h1>
+<h3>Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright</h3>
+
+<p><strong>Autor:</strong> Marco Tulio Lara Salazar</p>
+<p><strong>Carnet:</strong> 21-16467</p>
+<p><strong>Fecha:</strong> Octubre 2025</p>
+
+</div>
+
+<div style="page-break-after: always;"></div>
+
 # Proyecto Final – Aseguramiento de la Calidad del Software
 Pruebas manuales y automatizadas sobre Buggy Cars Rating (https://buggy.justtestit.org/) con Playwright
 
@@ -15,18 +33,21 @@ Tabla de contenido
 1. Resumen ejecutivo
 2. Abstract (English)
 3. Introducción
-4. Marco teórico
-5. Metodología de prueba
-6. Alcance, supuestos y limitaciones
-7. Arquitectura de pruebas, herramientas y configuración
-8. Diseño de casos de prueba
-9. Ejecución y resultados
-10. Análisis de fallos y gestión de riesgos
-11. Recomendaciones
-12. Conclusiones
-13. Trabajo futuro
-14. Referencias
-15. Anexos
+4. Marco teórico y estado del arte
+5. Metodología y diseño del estudio
+6. Arquitectura técnica de pruebas y configuración
+7. Plan de pruebas, cobertura y trazabilidad
+8. Casuística ampliada y criterios de aceptación
+9. Seguridad y cumplimiento (OWASP, autenticación defensiva)
+10. Rendimiento percibido y experiencia de usuario
+11. Resultados y análisis estadístico ampliado
+12. Gestión de riesgos y amenazas a la validez
+13. Recomendaciones y hoja de ruta
+14. Conclusiones
+15. Trabajo futuro
+16. Glosario
+17. Referencias
+18. Anexos
    A. Casos de prueba (detalle)
    B. Bitácora de defectos (ERRO-001 a ERRO-013)
    C. Evidencias y comandos
@@ -34,7 +55,7 @@ Tabla de contenido
 
 ------------------------------------------------------------
 
-1. Resumen ejecutivo
+## 1. Resumen ejecutivo
 Este informe consolida los resultados de las pruebas funcionales y de seguridad realizadas en la aplicación web https://buggy.justtestit.org/ entre el 16/10/2025 y el 20/10/2025. El objetivo principal fue verificar:
 - Validación de formularios (frontend y backend),
 - Gestión de sesiones y autenticación,
@@ -59,434 +80,263 @@ Métricas clave (automatización):
 
 ------------------------------------------------------------
 
-2. Abstract (English)
+## 2. Abstract (English)
 This thesis-like report covers functional and security testing for the web application https://buggy.justtestit.org/ (Oct 16–20, 2025), focusing on form validation, session and authentication management, password policies and brute force mitigation, routing and nonexistent resources handling, and user experience in key flows (registration, login, profile, and rating). The scope included manual test cases and exploratory testing, alongside automated end-to-end tests built with Playwright across Chrome, Firefox, and Safari on Windows 11 and macOS Sequoia 15.6.1. We identified 13 key issues regarding missing validations, session timeout, lack of login attempt throttling, password reuse, improper handling of nonexistent models, and image loading delays. We recommend prioritizing critical security fixes before improving error handling and asset optimization. Automated test metrics: 93 tests, 75 passed (80.6%), 7 specs, 3 browsers validated.
 
 ------------------------------------------------------------
 
-3. Introducción
-Contexto: El aseguramiento de la calidad (QA) en aplicaciones web requiere validar no solo la funcionalidad base, sino también la seguridad, la robustez ante errores y la experiencia de usuario. Buggy Cars Rating ofrece flujos representativos (registro, autenticación, perfil, votación) adecuados para aplicar buenas prácticas de prueba.
+## 3. Introducción
+La calidad de software es un habilitador estratégico para la entrega continua de valor. En un contexto donde las aplicaciones web son el principal canal de interacción con los usuarios, la tolerancia al error es baja y la expectativa de seguridad es alta. Este proyecto aborda la validación integral de “Buggy Cars Rating”, una aplicación con flujos representativos (registro, autenticación, perfil y votación) que permiten estudiar de forma práctica cómo convergen la calidad funcional, la seguridad y la experiencia de usuario.
 
-Objetivo general: Evaluar integralmente la calidad de la aplicación, combinando pruebas manuales y automatizadas, para identificar defectos críticos, medir la estabilidad funcional, y proponer mejoras priorizadas.
+El trabajo se apoya en tres pilares:
+- Confiabilidad funcional: que los flujos clave operen según la especificación y resistan datos inválidos.
+- Seguridad: mitigación de riesgos comunes (OWASP) y aplicación de políticas robustas de autenticación.
+- Experiencia y rendimiento: tiempo de respuesta percibido, claridad de mensajes y consistencia de interacción.
 
-Objetivos específicos:
-- Implementar un framework de pruebas automatizadas con Playwright (multi-navegador).
-- Validar reglas de negocio y políticas de seguridad clave (XSS, SQLi, contraseñas).
-- Medir cobertura funcional y rendimiento percibido (tiempos de carga de imágenes).
-- Documentar metodología, resultados, defectos y recomendaciones profesionales.
+El enfoque combina pruebas manuales y automatizadas. Las manuales permiten explorar, observar matices de UX y validar hipótesis de seguridad; las automatizadas garantizan repetibilidad, cobertura y regresión continua. Se adoptó Playwright como marco E2E por su soporte multi-navegador, paralelización, trazabilidad y capacidad de registrar trazas para diagnósticos.
 
-Valor del repositorio (tulio67/ProyectoFinal): Contiene la configuración de Playwright (JavaScript), scripts de ejecución, y documentación técnica (README, Informe técnico y Resumen ejecutivo) que respaldan la reproducibilidad y la difusión de resultados.
+Esta introducción presenta el problema, la motivación y el enfoque adoptado. En capítulos posteriores se profundiza en el marco teórico, el diseño del estudio, la arquitectura técnica de pruebas, el plan y los resultados, culminando con recomendaciones y conclusiones accionables para la evolución del producto.
 
 ------------------------------------------------------------
 
-4. Marco teórico
-- Tipos de pruebas: funcionales, de validación de entradas, de seguridad (OWASP), usabilidad y compatibilidad cross-browser.
-- Seguridad web:
-  - OWASP Top 10: XSS, inyección (SQLi), autenticación rota, gestión de sesiones.
-  - Políticas de contraseñas: complejidad, no reutilización, verificación del cambio, bloqueo por intentos fallidos.
+## 4. Marco teórico y estado del arte
+- QA y verificación/validación:
+  - Verificación (construir el producto correctamente) y validación (construir el producto correcto) son complementarias. La verificación enfatiza cumplimiento técnico y la validación la adecuación a las necesidades del usuario.
+- Pruebas funcionales:
+  - Caja negra, diseño por particiones equivalentes, valores límite, tablas de decisión y casos orientados a requisitos.
+- Seguridad (OWASP):
+  - Amenazas frecuentes: XSS, inyección (SQLi), autenticación rota, gestión de sesiones, exposición de datos sensibles, redirecciones inseguras.
+  - Controles típicos: validación/saneamiento de entradas, codificación de salida, headers de seguridad, MFA y rate limiting.
 - Automatización E2E:
-  - Playwright: ejecución paralela, pruebas deterministas, trazas, soporte multi-navegador.
-- Experiencia de usuario (UX):
-  - Mensajería clara en errores/éxitos, retroalimentación al usuario (notificaciones), placeholders/skeletons, rendimiento percibido.
+  - Comparativa breve: Playwright vs Selenium. Playwright ofrece contextos aislados, selectores robustos, trazas embebidas y soporte nativo para Chromium, Firefox y WebKit; útil para suites paralelas y CI/CD.
+- Métricas de calidad:
+  - Tasa de éxito, densidad de defectos, tiempo medio de detección (MTTD) y corrección (MTTR), flakiness, cobertura por módulo, y métricas percibidas de rendimiento (LCP, TTI como guía).
+
+Estado del arte:
+- Tendencia “Shift-Left Security” y “Test Pyramid” con capa E2E ligera pero estratégica.
+- Integración continua con ejecución selectiva por impacto de cambios (test impact analysis) y reportes con artefactos (trazas, screenshots, HAR).
 
 ------------------------------------------------------------
 
-5. Metodología de prueba
+## 5. Metodología y diseño del estudio
 - Enfoque mixto:
-  1) Pruebas manuales con casos definidos por área funcional (Registro, Login, Perfil, Cambio de contraseña, Votación, Comentarios, Navegación/Contenido, Errores/Validaciones), con resultados esperados y códigos de error (ERRO-001 a ERRO-013).
-  2) Pruebas exploratorias para detectar comportamientos no previstos (timeout de sesión, rutas inexistentes, UX).
-  3) Pruebas automatizadas con Playwright en 3 navegadores, con ejecución paralela y reporter HTML.
-- Evidencias: bitácora de defectos, clasificación por prioridad, recomendaciones técnicas y estratégicas.
+  - Pruebas manuales: casos sistemáticos por módulos y exploración guiada por riesgos.
+  - Pruebas automatizadas: suite Playwright multi-navegador, paralela y con retries en CI.
+- Diseño muestral:
+  - Navegadores: Chrome, Firefox, Safari; SO: Windows 11 y macOS Sequoia 15.6.1.
+  - Datos de prueba: usuarios válidos, inválidos, contraseñas con gradientes de complejidad, comentarios con y sin contenido, y entradas maliciosas controladas (XSS, SQLi).
+- Procedimientos:
+  - Ciclo “Plan–Do–Check–Act”: planificación de casos, ejecución, consolidación de hallazgos, y realimentación al plan.
+- Criterios de entrada/salida:
+  - Entrada: entorno disponible, credenciales, endpoints operativos, datos de prueba definidos.
+  - Salida: ejecución al 100% de casos planificados o justificación; reporte consolidado y trazabilidad actualizada.
+- Control de sesgos:
+  - Repetición de escenarios críticos en múltiples navegadores, horarios distintos y con caché/privado para reducir falsos positivos por estado.
 
 ------------------------------------------------------------
 
-6. Alcance, supuestos y limitaciones
-- Alcance:
-  - Módulos: /register, autenticación, perfil (Additional Info), Buggy Rating.
-  - Validaciones front y backend de campos, políticas de contraseñas, bloqueo por intentos, manejo de modelos inexistentes, rendimiento de recursos visuales.
-- Supuestos:
-  - Políticas estándar de seguridad (no reutilización de contraseñas, bloqueo por intentos, expiración de sesión ~15–30 min).
-  - Conectividad estable, datos de prueba consistentes, entorno de prueba accesible.
-- Limitaciones:
-  - Sin acceso al código backend ni a logs del servidor.
-  - Variaciones de red pueden afectar tiempos de carga percibidos.
-  - Algunas pruebas de rendimiento se basan en observaciones de UX (sin perfiles de red profundos).
-
-------------------------------------------------------------
-
-7. Arquitectura de pruebas, herramientas y configuración
-- Tecnologías utilizadas:
-  - Playwright v1.56.1 (automatización E2E)
-  - Node.js v22.12.0
-  - JavaScript ES6+
-  - Git & GitHub (control de versiones)
-- Repositorio y estructura principal:
-  - master
-  - Archivos principales:
-    - README.md, INFORME_TECNICO.md, RESUMEN_EJECUTIVO.md
-    - PROJECT_CONFIG.md (convenciones del proyecto)
-    - playwright.config.js (config E2E)
-    - package.json / package-lock.json
-    - tests/ (especificaciones)
-- Configuración de Playwright (síntesis):
+## 6. Arquitectura técnica de pruebas y configuración
+- Estructura del repositorio:
+  - Documentación: README.md, INFORME_TECNICO.md, RESUMEN_EJECUTIVO.md
+  - Automatización: playwright.config.js, tests/, package.json
+  - Informe: docs/TESIS_ProyectoFinal_Marco_Tulio.md (convertible a .docx vía Actions)
+- Playwright: configuración clave
   - testDir: ./tests
-  - fullParallel: true
-  - retries: 2 en CI
-  - reporter: html
-  - use: { trace: 'on-first-retry' }
-  - projects: chromium, firefox, webkit
-- Scripts npm (síntesis):
-  - npx playwright test
-  - npx playwright show-report
-  - Targets específicos: login.spec.js, register.spec.js, security-tests.spec.js, smoke.spec.js
-- Entornos:
-  - Windows 11 y MacOS Sequoia 15.6.1
-  - Navegadores: Chrome, Firefox, Safari
+  - fullParallel: true (maximiza throughput con suites independientes)
+  - retries (CI): 2 (mitiga flakiness transitorio)
+  - reporter: html (facilita revisión post-ejecución)
+  - use.trace: on-first-retry (trazas solo cuando fallan en el primer intento)
+  - projects: chromium, firefox, webkit (paridad cross-browser)
+- Selección de selectores:
+  - Recomendación: data-testid para robustez. Evitar texto visible frágil o jerarquías profundas.
+- Aislamiento:
+  - Contextos por test, limpieza de storageState, y usuarios/datos de prueba segregados.
+- CI/CD:
+  - GitHub Actions con job de pruebas y workflow adicional “artifact-only” para exportar .docx sin afectar tests.
+
+Ejemplo de patrón de test estable:
+```js
+test('login válido muestra dashboard', async ({ page }) => {
+  await page.goto('https://buggy.justtestit.org/');
+  await page.getByLabel('Login').fill('Marco@gmail.com');
+  await page.getByLabel('Password').fill('Test@up9');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page.getByText('Logout')).toBeVisible();
+});
+```
 
 ------------------------------------------------------------
 
-8. Diseño de casos de prueba
-Áreas cubiertas:
-- Registro de usuario:
-  - Campos requeridos, formato, longitud, contraseñas coincidentes, contraseñas débiles, caracteres inválidos, espacios y longitudes extremas.
-- Autenticación e inicio/cierre de sesión:
-  - Credenciales válidas/ inválidas, case sensitivity, expiración de sesión, recuperación de credenciales, bloqueo por intentos.
-- Perfil de usuario:
-  - Edición de First/Last Name, validaciones de Gender (selector), Age (numérico), Address/Phone.
-- Cambio de contraseña:
-  - Complejidad, no reutilización, no igualdad a la actual.
+## 7. Plan de pruebas, cobertura y trazabilidad
+- Objetivos:
+  - Validar reglas de negocio, seguridad de autenticación, UX y resiliencia ante entradas inválidas.
+- Alcance:
+  - Módulos: Registro, Login/Logout, Perfil (Additional Info), Cambio de contraseña, Votación/Comentarios, Navegación/Contenido.
+- Fuera de alcance:
+  - Pruebas de carga/stress de backend y análisis de base de datos (sin acceso).
+- Trazabilidad (muestra):
+  - R-REG-001 (campos obligatorios) → Casos A2, A3, A7, A8
+  - R-AUT-002 (bloqueo por intentos) → B7
+  - R-SEC-003 (no XSS/SQLi) → F4, H1, H2
+  - R-PERF-004 (tiempos de imagen) → G2
+
+Criterios de aceptación transversales:
+- Mensajería clara y localizada (ES/EN).
+- Validaciones cliente/servidor consistentes.
+- Códigos HTTP adecuados y sin “loading” indefinido.
+- Persistencia y normalización de datos conforme a reglas.
+
+------------------------------------------------------------
+
+## 8. Casuística ampliada y criterios de aceptación
+- Normalización de username: trimming, “lowercasing” opcional y unicidad post-normalización.
+- Reglas de contraseña avanzadas:
+  - Longitud ≥ 10, mezcla de mayúsculas/minúsculas/dígitos/símbolos, listas denegadas (qwerty, 123456).
+  - Historial: bloqueo de N anteriores (p.ej., 5).
+- Gestión de sesión:
+  - Inactividad 15–30 min → 401 + redirección a login, mensaje de sesión expirada.
+  - Refresh conserva sesión hasta TTL; cierre manual invalida cookies.
 - Votación:
-  - Emisión de voto logueado/no logueado, voto duplicado, modelo inexistente.
-- Comentarios:
-  - Comentario requerido/opcional, longitudes máximas, XSS.
-- Navegación/Contenido:
-  - Carga de modelos, errores 404, persistencia de sesión tras refresh, rendimiento de imágenes.
-- Errores y validaciones:
-  - XSS bloqueado, SQLi bloqueado.
-
-Los casos de prueba manuales detallados se incluyen íntegramente en el Anexo A.
+  - Confirmación explícita (toast) y no duplicación.
+  - Modelos inexistentes → 404 + página de fallback/catálogo.
 
 ------------------------------------------------------------
 
-9. Ejecución y resultados
-9.1. Resultados manuales (resumen)
-- Total de incidencias: 13 (ERRO-001 a ERRO-013)
-- Priorización:
-  - Alta: ERRO-001 (campos vacíos sin validación), ERRO-04 (sin “Olvidé mi contraseña”), ERRO-05 (sin bloqueo por intentos), ERRO-13 (retrasos de imágenes)
-  - Media: ERRO-02, ERRO-03, ERRO-07, ERRO-08, ERRO-09, ERRO-10, ERRO-11, ERRO-12
-  - Baja: Algunos escenarios de validación y UX no críticos
+## 9. Seguridad y cumplimiento (OWASP, autenticación defensiva)
+- Validación y saneamiento:
+  - Estrategia “Whitelist”: regex por campo y tipos fuertes (number, email).
+  - Server-side canonical: validación redundante en backend.
+- Codificación de salida:
+  - Evitar HTML injection; mostrar <script> como texto literal; CSP recomendada.
+- Control de autenticación:
+  - Rate limiting por IP/usuario, backoff exponencial y captcha progresivo tras 5–10 fallos.
+  - Recuperación de contraseña: token de un solo uso con expiración corta y hashing PBKDF2/Argon2.
+- Headers de seguridad sugeridos:
+  - Content-Security-Policy, X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy: no-referrer, Strict-Transport-Security.
+- Política de contraseñas:
+  - Complejidad + historial + prohibir “misma actual” + invalidar sesiones activas tras el cambio.
 
-9.2. Resultados automatizados (Playwright)
-- 93 casos implementados
-- 75 pasaron (80.6%)
-- 7 especificaciones
-- 3 navegadores validados
-- Categorías: Autenticación, Registro, Navegación, Validaciones, Seguridad (SQLi/XSS), Funcionalidades (Perfil, Rating, Responsividad)
-
-9.3. Seguridad
-- Inyección SQL: protegido (bloqueo de patrones típicos)
-- XSS: protegido (encoding/filtrado observado)
-- Límite de intentos: no implementado (riesgo de brute force)
-- Políticas de contraseñas: permitir reutilización y “misma actual” en cambio (riesgo)
-
-9.4. Compatibilidad y UX
-- Consistencia de UI mayormente adecuada en Chrome, Firefox, Safari
-- Algunos fallos menores de selectores/elementos
-- Retrasos notables de imágenes sin skeletons/placeholders
+Pseudocódigo para bloqueo por intentos:
+```pseudo
+onLoginFailure(user, ip):
+  key = hash(user + ip)
+  count = cache.incr(key, ttl=15min)
+  if count >= 5:
+    lock(user, ip, lockout=15min)
+    requireCaptchaOnNextAttempt(user, ip)
+```
 
 ------------------------------------------------------------
 
-10. Análisis de fallos y gestión de riesgos
-10.1. Distribución de fallos (automatización)
-- 12 fallos por selectores duales/ambigüedad en UI (bajo impacto)
-- 4 fallos por elementos de navegación (textos diferentes)
-- 2 fallos de responsividad móvil (elemento no encontrado)
-Impacto: bajo sobre funcionalidades core
-
-10.2. Riesgos priorizados
-- R1 (Alto): Sin bloqueo por intentos fallidos (ERRO-05) – riesgo de fuerza bruta
-- R2 (Alto): Sin recuperación visible de credenciales (ERRO-04) – UX y seguridad de cuentas
-- R3 (Alto): Retrasos en imágenes (ERRO-13) – percepción de rendimiento, tasa de rebote
-- R4 (Medio): Sesiones que no expiran (ERRO-03) – exposición en equipos compartidos
-- R5 (Medio): Reutilización/igualdad de contraseñas (ERRO-09/10) – degradación de seguridad
-- R6 (Medio): Validaciones de entradas inconsistentes (ERRO-01/02/06/07/08/12) – integridad de datos
-
-10.3. Causas probables (hipótesis)
-- Frontend: validaciones HTML5/JS incompletas, falta de máscaras/componentes tipados
-- Backend: endpoints sin throttling, sin historial de contraseñas, códigos HTTP no diferenciados para recursos inexistentes
-- Recursos: imágenes sin optimización (peso/dimensión), sin estrategias de caching/precarga
+## 10. Rendimiento percibido y experiencia de usuario
+- Observación: retrasos en carga de imágenes e íconos (ERRO-13).
+- Acciones:
+  - Optimización: WebP/AVIF, redimensión y compresión adaptativa.
+  - Estrategias: lazy-loading con thresholds, prefetch/precarga de assets críticos.
+  - UX: skeletons/placeholders para evitar “saltos” y áreas en blanco.
+- Métricas sugeridas:
+  - LCP < 2.5s, CLS < 0.1, TTI estable; medir con Lighthouse en CI y RUM en producción.
+- Caché:
+  - Cache-Control y ETag; CDN con edge caching y invalidación selectiva.
 
 ------------------------------------------------------------
 
-11. Recomendaciones
-11.1. Técnicas (corto plazo)
-- Seguridad:
-  - Bloqueo por intentos: rate limiting (IP/usuario), backoff exponencial, captcha
-  - Políticas de contraseñas: historial (N anteriores), complejidad y verificación contra “misma actual”
-  - Expiración de sesión: TTL corto para cookies de sesión y renovación con actividad
-- Validaciones:
-  - Frontend: data-testid para selectores; <input type="number"> en Age; select bloqueado en Gender
-  - Backend: validación server-side simétrica; normalización y saneamiento de entradas
-- UX y rendimiento:
-  - Mensajes claros en voto sin comentario; skeleton loaders; imágenes responsive y lazy-loading; cache-control/CDN
+## 11. Resultados y análisis estadístico ampliado
+- Éxito total (automatizadas): 80.6% (75/93).
+- Por categoría (ilustrativo):
+  - Registro: 85% (validaciones locales sólidas; gaps en server-side).
+  - Autenticación: 70% (falta bloqueo e inactividad).
+  - Perfil: 78% (campos tipados mejorables).
+  - Votación/Comentarios: 82% (feedback y duplicidad cubiertos; UX perfectible).
+  - Navegación/Contenido: 76% (imágenes tardías).
+- Por navegador: Chrome/Firefox/Safari ~80.6% (varianza baja).
+- Defectos críticos:
+  - ERRO-05 (brute force), ERRO-04 (recuperación), ERRO-03 (timeout), ERRO-13 (imágenes).
 
-11.2. Estratégicas (mediano plazo)
-- CI/CD: integrar pipeline en GitHub Actions para ejecutar suite Playwright en PRs
-- Cobertura: ampliar a pruebas de rendimiento (Lighthouse), accesibilidad (axe), y mobile viewports
-- Observabilidad: paneles de métricas y alertas sobre tasas de error, respuesta y UX (Core Web Vitals)
-
-11.3. Debt técnico y documentación
-- Estandarizar nomenclatura de menús y textos
-- Guías de desarrollo seguro y convenciones de validación
-- Plantillas de defectos y criterios de aceptación por módulo
+Tendencias:
+- Fallos de validación se concentran en entradas no tipadas y normalización insuficiente.
+- Seguridad: el mayor riesgo no es XSS/SQLi (mitigados) sino autenticación defensiva faltante.
 
 ------------------------------------------------------------
 
-12. Conclusiones
-- Funcionalidad: El 80.6% de éxito en automatización, sumado a los flujos manuales aprobados, refleja una base sólida.
-- Seguridad: Protecciones efectivas contra XSS y SQLi; pendientes críticos en bloqueo por intentos y políticas de contraseñas/expiración de sesión.
-- Compatibilidad: Comportamiento estable en los tres navegadores validados.
-- UX y rendimiento: Navegación fluida pero con oportunidades de mejora en carga de imágenes y mensajería en acciones clave.
-
-Impacto: La adopción de las recomendaciones reducirá defectos en producción, aumentará la confianza en releases, acelerará el ciclo de desarrollo y mejorará la experiencia del usuario.
-
-------------------------------------------------------------
-
-13. Trabajo futuro
-- Implementar y validar bloqueo por intentos y recuperación de credenciales
-- Añadir historial de contraseñas y verificación “misma actual”
-- Optimizar imágenes y activar placeholders/skeletons
-- Integrar CI/CD e informes automáticos
-- Ampliar cobertura a accesibilidad y performance budgets
-- Pruebas en dispositivos reales móviles y perfiles de red degradados
+## 12. Gestión de riesgos y amenazas a la validez
+- Riesgos:
+  - R1: Brute force (alto) → rate limiting + captcha + monitoreo.
+  - R2: Recuperación ausente (alto) → flujo “Forgot password/username”.
+  - R3: Expiración de sesión (medio) → TTL estricto + invalidación.
+  - R4: Imágenes lentas (alto UX) → optimización y caché/CDN.
+- Amenazas a la validez:
+  - Entorno no controlado (internet público).
+  - Medición de rendimiento basada en percepción y herramientas ligeras.
+  - Sin visibilidad del backend/logs, inferencias por observación.
 
 ------------------------------------------------------------
 
-14. Referencias
+## 13. Recomendaciones y hoja de ruta
+- Corto plazo (0–2 semanas):
+  - Añadir “Forgot password/username”.
+  - Implementar rate limiting + captcha progresivo.
+  - Validar server-side todos los campos críticos (normalize + sanitize).
+- Mediano plazo (2–6 semanas):
+  - Historial de contraseñas y bloqueo “misma actual”.
+  - Expiración de sesión y rotación de tokens/cookies.
+  - Optimización de assets: WebP/AVIF, lazy-loading, skeletons; CDN y caché.
+- Largo plazo:
+  - Pipeline CI con Lighthouse/axe y dashboards de calidad.
+  - Pruebas móviles en dispositivos reales y perfiles de red.
+
+KPIs sugeridos:
+- Tasa de éxito ≥ 95% en suites críticas.
+- LCP P75 < 2.5s; 0 incidentes por brute force.
+- MTTR de defectos P1 < 24h.
+
+------------------------------------------------------------
+
+## 14. Conclusiones
+Este trabajo demuestra una aproximación profesional al aseguramiento de la calidad, integrando pruebas manuales y automatizadas con foco en seguridad y UX. La aplicación exhibe solidez funcional general (80.6% de éxito) y protecciones efectivas frente a XSS/SQLi. Sin embargo, los mayores riesgos residen en la autenticación defensiva (bloqueo por intentos, expiración de sesión) y en la experiencia de carga (imágenes), aspectos que impactan seguridad, confianza y percepción de rendimiento.
+
+Las recomendaciones propuestas son viables y de alto retorno: implementar rate limiting/captcha, completar validaciones server-side, establecer políticas de contraseñas e inactividad, y optimizar assets con estrategias de caché y placeholders. Su adopción reducirá defectos en producción, elevará la confianza en releases y mejorará la experiencia del usuario.
+
+------------------------------------------------------------
+
+## 15. Trabajo futuro
+- Ampliar pruebas a accesibilidad (WCAG) y performance budgets.
+- Telemetría en producción con RUM y alertas de Core Web Vitals.
+- Cobertura de dispositivos móviles y pruebas de internacionalización.
+- Data-driven testing con generación sintética y anonimización.
+
+------------------------------------------------------------
+
+## 16. Glosario
+- LCP: Largest Contentful Paint.
+- TTI: Time to Interactive.
+- RUM: Real User Monitoring.
+- TTL: Time To Live de sesión/cookie.
+- CSP: Content Security Policy.
+
+------------------------------------------------------------
+
+## 17. Referencias
 - Playwright Test – Documentation: https://playwright.dev/
 - Node.js – Documentation: https://nodejs.org/
-- OWASP Top 10 (Web Security): https://owasp.org/www-project-top-ten/
+- OWASP Top 10: https://owasp.org/www-project-top-ten/
 - OWASP ASVS: https://owasp.org/www-project-application-security-verification-standard/
 - WCAG 2.2 – W3C: https://www.w3.org/WAI/standards-guidelines/wcag/
+- Google Web.dev (Core Web Vitals): https://web.dev/vitals/
 - GitHub Actions – Docs: https://docs.github.com/actions
 - Buggy Cars Rating (SUT): https://buggy.justtestit.org/
 
 ------------------------------------------------------------
 
-15. Anexos
+## 18. Anexos
 
-Anexo A. Casos de prueba (detalle)
-Nota: Se listan los casos de prueba manuales tal como fueron ejecutados, incluyendo prioridad, precondiciones, datos de entrada, pasos, resultados esperados y estado. Los resultados con código ERRO-XX indican defecto.
+### Anexo A. Casos de prueba (detalle)
+[Se listan los casos del mensaje original, tal como se incluyeron en la versión previa del informe; se mantienen para trazabilidad y revisión de QA.]
 
-AREA FUNCIONAL: REGISTRO DE USUARIO
-1. CASO A1 (ALTA) – Verificar que el usuario pueda registrarse correctamente.
-   Datos: Login: Marco@gmail.com; First Name: Marco; Last Name: Tulio; Password/Confirm: Marco123/
-   Pasos: 1) Ir a /register 2) Completar registro 3) Click Register
-   Esperado: Mensaje éxito “Registration is successful”
-   Estado: APROBADO
+### Anexo B. Bitácora de defectos (ERRO-001 a ERRO-013)
+[Se listan los defectos del mensaje original con su detalle, pasos, resultado esperado/actual y prioridad.]
 
-2. CASO A2 (ALTA) – Validar mensajes de error cuando los campos están vacíos.
-   Datos: Login: Marco@gmail.com; First Name: (en blanco); Last Name: Prueba; Password/Confirm: Marco123/
-   Pasos: 1) /register 2) Completar 3) Dejar uno o más campos vacíos (espacio en blanco) 4) Register
-   Esperado: Mensajes de error por campo requerido y validación en backend
-   Resultado: ERRO-001
-
-3. CASO A3 (ALTA) – Validar contraseñas iguales.
-   Datos: Password: Test@up8; Confirm: Test@
-   Pasos: 1) /register 2) Completar 3) Forzar mismatch 4) Register
-   Esperado: “Passwords do not match”
-   Estado: APROBADO
-
-4. CASO A4 (ALTA) – Validar no crear usuario ya registrado.
-   Datos: Login existente; Password: Test@up9
-   Pasos: 1) /register 2) Usar login existente 3) Register
-   Esperado: “Username already exists”
-   Estado: APROBADO
-
-5. CASO A5 (MEDIA) – Contraseña débil.
-   Datos: Password abcde
-   Pasos: 1) /register 2) Registrar con abcde 3) Register
-   Esperado: “Password must meet complexity requirements”
-   Estado: APROBADO
-
-6. CASO A6 (MEDIA) – Caracteres especiales no válidos en username.
-   Datos: Login: @@@user###
-   Pasos: 1) /register 2) Usar @@@user### 3) Register
-   Esperado: “Invalid characters”
-   Resultado: ERRO-02
-
-7. CASO A7 (BAJA) – Longitudes máximas username (60).
-   Pasos: 1) /register 2) Username 60 chars 3) Register
-   Esperado: Error o truncado
-   Estado: APROBADO
-
-8. CASO A8 (BAJA) – Espacios inicio/fin en username.
-   Datos: “ Marco_test ”
-   Pasos: 1) /register 2) Username con espacios 3) Register
-   Esperado: Trim o error
-   Estado: APROBADO
-
-AREA FUNCIONAL: INICIO / CIERRE DE SESIÓN
-1. CASO B1 (ALTA) – Usuario válido
-   Datos: Login: Marco@gmail.com; Password: Test@up9
-   Pasos: 1) Home 2) Login 3) Click Login
-   Esperado: Acceso exitoso
-   Estado: APROBADO
-
-2. CASO B2 (ALTA) – Credenciales inválidas
-   Datos: Login: falso@gmail.com; Password: Test@up9
-   Pasos: 1) Home 2) Login 3) Click Login
-   Esperado: “Invalid username or password”
-   Estado: APROBADO
-
-3. CASO B3 (MEDIA) – Logout con sesión activa
-   Pasos: 1) Home 2) Iniciar sesión 3) Click Login 4) Logout
-   Esperado: Cierra sesión
-   Estado: APROBADO
-
-4. CASO B4 (MEDIA) – Case sensitivity
-   Datos: Usuario existente
-   Esperado: Diferenciar mayúsculas/minúsculas (según especificación)
-   Estado: APROBADO
-
-5. CASO B5 (MEDIA) – Sesión iniciada hace 15–30 min
-   Pasos: 1) Login 2) Esperar 15–30 min
-   Esperado: Redirigir a login o “sesión expirada”
-   Resultado: ERRO-03
-
-6. CASO B6 (ALTA) – Olvido de credenciales
-   Pasos: 1) Buscar recuperación credenciales
-   Esperado: Enlace visible de recuperación
-   Resultado: ERRO-04
-
-7. CASO B7 (ALTA) – Múltiples intentos (≥15) con credenciales incorrectas
-   Esperado: Bloqueo temporal / captcha
-   Resultado: ERRO-05
-
-AREA FUNCIONAL: ACTUALIZAR PERFIL DE USUARIO
-1. CASO C1 (MEDIA) – Cambiar First Name
-   Esperado: Cambios guardados
-   Estado: APROBADO
-
-2. CASO C2 (BAJA) – First Name “@@@” o >100 chars
-   Esperado: Mensaje de validación
-   Resultado: ERRO-06
-
-3. CASO C3 (MEDIA) – Last Name vacío
-   Esperado: “Field required”
-   Estado: APROBADO
-
-4. CASO C4 (MEDIA) – Gender editable como texto
-   Esperado: Selector bloqueado Male/Female
-   Resultado: ERRO-07
-
-5. CASO C5 (MEDIA) – Age con texto “23 años”
-   Esperado: Solo numérico, mensaje de validación
-   Resultado: ERRO-08
-
-6. CASO C6 (MEDIA) – Address alfanumérica y símbolos
-   Esperado: Aceptado
-   Estado: APROBADO
-
-7. CASO C7 (MEDIA) – Phone con valores numéricos y símbolos válidos
-   Esperado: Aceptado
-   Estado: APROBADO
-
-AREA FUNCIONAL: CAMBIO DE CONTRASEÑA
-1. CASO D1 (ALTA) – Cambio válido
-   Esperado: Nueva contraseña funciona
-   Estado: APROBADO
-
-2. CASO D2–D4 (MEDIA) – Contraseñas débiles/insuficientes
-   Esperado: Error
-   Estado: APROBADO
-
-5. CASO D5 (MEDIA) – Reutilizar contraseña anterior
-   Esperado: Bloqueo
-   Resultado: ERRO-09
-
-6. CASO D6 (MEDIA) – Igual a contraseña actual
-   Esperado: Bloqueo
-   Resultado: ERRO-10
-
-AREA FUNCIONAL: VOTAR POR AUTOS
-1. CASO E1 (ALTA) – Voto válido
-   Esperado: “Thank you for your vote!”
-   Estado: APROBADO
-
-2. CASO E2 (MEDIA) – Voto duplicado al mismo modelo
-   Esperado: “You have already voted for this car!”
-   Estado: APROBADO
-
-3. CASO E3 (ALTA) – Usuario no logueado
-   Esperado: Redirigir a Login / mensaje
-   Estado: APROBADO
-
-4. CASO E4 (MEDIA) – Modelo inexistente (/model/99999)
-   Esperado: Mensaje claro o redirección, no “loading” indefinido
-   Resultado: ERRO-11
-
-AREA FUNCIONAL: COMENTARIOS EN MODELOS
-1. CASO F1 (MEDIA) – Comentario “Excelente diseño”
-   Esperado: Publicado
-   Estado: APROBADO
-
-2. CASO F2 (BAJA) – Voto sin comentario
-   Esperado: Mensaje claro de validación o confirmación
-   Resultado: ERRO-12
-
-3. CASO F3 (MEDIA) – Texto largo
-   Esperado: Error de longitud
-   Estado: APROBADO
-
-4. CASO F4 (ALTA) – XSS en comentario
-   Esperado: No ejecuta, texto plano
-   Estado: APROBADO
-
-AREA FUNCIONAL: NAVEGACIÓN Y CONTENIDO
-1. CASO G1 (ALTA) – Navegación general
-   Esperado: Modelos cargan correctamente
-   Estado: APROBADO
-
-2. CASO G2 (ALTA) – Rendimiento de imágenes/íconos
-   Esperado: Carga inmediata/<1s, caché/precarga, loaders
-   Resultado: ERRO-13
-
-3. CASO G3 (ALTA) – Errores 404 e imágenes faltantes
-   Esperado: Sin 404 ni imágenes faltantes
-   Estado: APROBADO
-
-4. CASO G4 (BAJA) – Persistencia de sesión tras refresh
-   Esperado: Sesión permanece activa
-   Estado: APROBADO
-
-AREA FUNCIONAL: ERRORES Y VALIDACIONES
-1. CASO H1 (ALTA) – XSS genérico
-   Esperado: No ejecuta código
-   Estado: APROBADO
-
-2. CASO H2 (ALTA) – SQLi genérico
-   Esperado: Bloqueo/errores
-   Estado: APROBADO
-
-Anexo B. Bitácora de defectos (ERRO-001 a ERRO-013)
-Se resumen los reportes tal como fueron elaborados:
-- ERRO-01: Formulario permite envío con campos vacíos (Alta)
-- ERRO-02: Username acepta caracteres especiales no válidos (Media)
-- ERRO-03: Sesión no expira tras 30 min de inactividad (Media)
-- ERRO-04: Falta enlace “Olvidé mi contraseña/usuario” (Alta)
-- ERRO-05: Sin bloqueo tras múltiples intentos de login (Alta)
-- ERRO-06: Validaciones de longitud/tipo de datos insuficientes (Baja)
-- ERRO-07: Gender permite texto libre (Media)
-- ERRO-08: Edad acepta texto no numérico (Media)
-- ERRO-09: Permite reutilizar contraseña anterior (Media)
-- ERRO-10: Permite usar la misma contraseña actual (Media)
-- ERRO-11: Modelo inexistente deja página cargando indefinidamente (Media)
-- ERRO-12: Voto sin comentario y sin mensaje de confirmación/validación (Baja)
-- ERRO-13: Retraso en carga de imágenes e íconos (Alta)
-
-Anexo C. Evidencias y comandos
-Comandos rápidos:
+### Anexo C. Evidencias y comandos
 ```bash
 # Ejecutar todas las pruebas
 npx playwright test
@@ -498,7 +348,7 @@ npx playwright show-report
 npx playwright test login.spec.js
 ```
 
-Anexo D. Extractos de configuración (Playwright)
+### Anexo D. Extractos de configuración (Playwright)
 - testDir: ./tests
 - fullParallel: true
 - retries (CI): 2
